@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ゆうまる | リンク集</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='15' fill='%230f1117' stroke='%2347d7e0' stroke-width='2'/%3E%3Ccircle cx='16' cy='16' r='4' fill='%2347d7e0'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@500;700;900&family=Noto+Sans+JP:wght@400;500;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0e1016;
+    --bg-panel:#171a24;
+    --bg-card:#1b1e2a;
+    --line:#2a2e3d;
+    --text:#eef1f7;
+    --muted:#8b92a8;
+    --cyan:#47d7e0;
+    --amber:#ffb84f;
+    --magenta:#ff5d8f;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--text);
+    font-family:"Noto Sans JP","Zen Kaku Gothic New",sans-serif;
+    -webkit-font-smoothing:antialiased;
+    position:relative;
+    overflow-x:hidden;
+  }
+  a{color:inherit;text-decoration:none;}
+
+  /* subtle scanline / grain texture over whole page */
+  .noise{
+    position:fixed; inset:0; pointer-events:none; z-index:50;
+    background:
+      repeating-linear-gradient(0deg, rgba(255,255,255,0.015) 0px, rgba(255,255,255,0.015) 1px, transparent 1px, transparent 3px);
+    mix-blend-mode:overlay;
+  }
+
+  /* ---------- HERO ---------- */
+  .hero{
+    position:relative;
+    padding:72px 24px 40px;
+    max-width:1080px;
+    margin:0 auto;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:32px;
+  }
+  .hero-inner{max-width:560px;}
+  .eyebrow{
+    font-family:"JetBrains Mono",monospace;
+    font-size:12px;
+    letter-spacing:0.18em;
+    color:var(--cyan);
+    margin:0 0 18px;
+    text-transform:uppercase;
+  }
+  .title{
+    font-family:"Zen Kaku Gothic New",sans-serif;
+    font-weight:900;
+    font-size:clamp(40px,7vw,68px);
+    line-height:1.05;
+    margin:0 0 14px;
+    letter-spacing:0.01em;
+  }
+  .title-sub{
+    display:block;
+    font-size:0.34em;
+    font-weight:700;
+    color:var(--muted);
+    letter-spacing:0.28em;
+    margin-top:10px;
+  }
+  .hero-desc{
+    color:var(--muted);
+    font-size:15px;
+    line-height:1.8;
+    margin:0;
+  }
+  .turntable{
+    flex:0 0 auto;
+    width:200px;
+    border-radius:14px;
+    padding:10px;
+    background:var(--bg-panel);
+    border:1px solid var(--line);
+    box-shadow:0 0 0 1px rgba(71,215,224,0.08), 0 12px 32px -12px rgba(71,215,224,0.35);
+  }
+  .turntable img{
+    display:block;
+    width:100%;
+    height:auto;
+    aspect-ratio:541 / 361;
+    object-fit:contain;
+    border-radius:8px;
+  }
+  @media (max-width:720px){
+    .hero{flex-direction:column;align-items:flex-start;padding-top:56px;}
+    .turntable{align-self:center;width:170px;}
+  }
+
+  /* loading groove gauge under hero */
+  .gauge-load{
+    max-width:1080px;
+    margin:0 auto;
+    padding:0 24px 56px;
+    display:flex;
+    gap:3px;
+  }
+  .gauge-load span{
+    flex:1;
+    height:6px;
+    background:var(--line);
+    border-radius:1px;
+    opacity:0;
+    transform:scaleY(0.4);
+    animation:fillup 0.4s ease forwards;
+  }
+
+  /* ---------- CATEGORY SECTIONS ---------- */
+  main{max-width:1080px;margin:0 auto;padding:0 24px 80px;}
+  .category{margin-bottom:56px;}
+  .cat-header{display:flex;align-items:center;gap:18px;margin-bottom:20px;}
+  .cat-header h2{
+    font-family:"JetBrains Mono",monospace;
+    font-size:14px;
+    letter-spacing:0.22em;
+    font-weight:700;
+    color:var(--accent);
+    margin:0;
+    white-space:nowrap;
+  }
+  .gauge{flex:1;display:flex;gap:2px;height:10px;align-items:flex-end;}
+  .gauge span{
+    flex:1;
+    background:var(--line);
+    height:100%;
+    border-radius:1px;
+  }
+  .gauge span.lit{background:var(--accent);}
+
+  .cards{
+    display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(270px,1fr));
+    gap:14px;
+  }
+  .card{
+    position:relative;
+    display:flex;
+    align-items:center;
+    gap:14px;
+    background:var(--bg-card);
+    border:1px solid var(--line);
+    border-radius:10px;
+    padding:16px 18px;
+    overflow:hidden;
+    transition:border-color .2s ease, transform .2s ease, background .2s ease;
+  }
+  .card:hover, .card:focus-visible{
+    border-color:var(--accent);
+    transform:translateY(-2px);
+    background:#1e2230;
+  }
+  .card:focus-visible{outline:2px solid var(--accent);outline-offset:2px;}
+  .card::before{
+    content:"";
+    position:absolute;
+    left:0; top:0; bottom:0;
+    width:3px;
+    background:var(--accent);
+    transform:scaleY(0);
+    transform-origin:bottom;
+    transition:transform .25s ease;
+  }
+  .card:hover::before, .card:focus-visible::before{transform:scaleY(1);}
+
+  .card-icon{
+    flex:0 0 auto;
+    width:38px;height:38px;
+    display:flex;align-items:center;justify-content:center;
+    border-radius:8px;
+    background:rgba(255,255,255,0.04);
+    color:var(--accent);
+  }
+  .card-icon svg{width:19px;height:19px;}
+  .card-body{flex:1;min-width:0;display:flex;flex-direction:column;gap:3px;}
+  .card-title{font-size:14.5px;font-weight:700;letter-spacing:0.01em;}
+  .card-url{
+    font-family:"JetBrains Mono",monospace;
+    font-size:11.5px;
+    color:var(--muted);
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+  }
+  .card-arrow{
+    flex:0 0 auto;
+    color:var(--muted);
+    font-family:"JetBrains Mono",monospace;
+    transition:transform .2s ease, color .2s ease;
+  }
+  .card:hover .card-arrow, .card:focus-visible .card-arrow{
+    transform:translateX(3px);
+    color:var(--accent);
+  }
+
+  section[data-accent="cyan"]{--accent:var(--cyan);}
+  section[data-accent="amber"]{--accent:var(--amber);}
+  section[data-accent="magenta"]{--accent:var(--magenta);}
+
+  footer{
+    max-width:1080px;margin:0 auto;padding:24px 24px 48px;
+    border-top:1px solid var(--line);
+    color:var(--muted);
+    font-family:"JetBrains Mono",monospace;
+    font-size:11.5px;
+    display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;
+  }
+</style>
+</head>
+<body>
+<div class="noise"></div>
+
+<header class="hero">
+  <div class="hero-inner">
+    <p class="eyebrow">beatmania IIDX INFINITAS / GITADORA streamer</p>
+    <h1 class="title">ゆうまる<span class="title-sub">LINKS</span></h1>
+    <p class="hero-desc">配信・動画・プレイ記録をまとめたリンク集です。</p>
+  </div>
+  <div class="turntable">
+    <img src="dj-cat.gif" alt="ターンテーブルで寝落ちする猫のアニメーション" width="541" height="361">
+  </div>
+</header>
+
+<div class="gauge-load" aria-hidden="true" id="heroGauge"></div>
+
+<main>
+  <section class="category" data-accent="cyan">
+    <div class="cat-header">
+      <h2>SNS</h2>
+      <div class="gauge" data-fill="7"></div>
+    </div>
+    <div class="cards">
+      <a class="card" href="https://x.com/munmetal01" target="_blank" rel="noopener">
+        <span class="card-icon">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.9 2H22l-7.6 8.7L23.3 22h-7.1l-5.6-6.9L4.2 22H1l8.1-9.3L1 2h7.3l5 6.3L18.9 2Zm-1.2 18h1.9L7.4 4H5.4l12.3 16Z"/></svg>
+        </span>
+        <span class="card-body">
+          <span class="card-title">X（旧Twitter）</span>
+          <span class="card-url">@munmetal01</span>
+        </span>
+        <span class="card-arrow">→</span>
+      </a>
+      <a class="card" href="https://www.youtube.com/@munmetal" target="_blank" rel="noopener">
+        <span class="card-icon">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M22 12s0-3.4-.4-5a2.8 2.8 0 0 0-2-2C17.9 4.5 12 4.5 12 4.5s-5.9 0-7.6.5a2.8 2.8 0 0 0-2 2C2 8.6 2 12 2 12s0 3.4.4 5a2.8 2.8 0 0 0 2 2c1.7.5 7.6.5 7.6.5s5.9 0 7.6-.5a2.8 2.8 0 0 0 2-2c.4-1.6.4-5 .4-5ZM10 15.3V8.7l6 3.3-6 3.3Z"/></svg>
+        </span>
+        <span class="card-body">
+          <span class="card-title">YouTubeチャンネル</span>
+          <span class="card-url">youtube.com/@munmetal</span>
+        </span>
+        <span class="card-arrow">→</span>
+      </a>
+    </div>
+  </section>
+
+  <section class="category" data-accent="amber">
+    <div class="cat-header">
+      <h2>ARCHIVE</h2>
+      <div class="gauge" data-fill="10"></div>
+    </div>
+    <div class="cards">
+      <a class="card" href="https://munmetal01.github.io/YouTube/" target="_blank" rel="noopener">
+        <span class="card-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18M8 4v16"/></svg>
+        </span>
+        <span class="card-body">
+          <span class="card-title">YouTube動画チャプターリスト</span>
+          <span class="card-url">munmetal01.github.io/YouTube</span>
+        </span>
+        <span class="card-arrow">→</span>
+      </a>
+      <a class="card" href="https://munmetal01.github.io/INFINITAS/Result/" target="_blank" rel="noopener">
+        <span class="card-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 20V10M11 20V4M18 20v-7"/></svg>
+        </span>
+        <span class="card-body">
+          <span class="card-title">INFINITASプレイログ</span>
+          <span class="card-url">munmetal01.github.io/INFINITAS/Result</span>
+        </span>
+        <span class="card-arrow">→</span>
+      </a>
+      <a class="card" href="https://sp12.iidx.app/sheets/5226-1642/hard" target="_blank" rel="noopener">
+        <span class="card-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M3 15h18M9 3v18"/></svg>
+        </span>
+        <span class="card-body">
+          <span class="card-title">INFINITAS ☆12ハード参考表</span>
+          <span class="card-url">sp12.iidx.app/sheets/5226-1642/hard</span>
+        </span>
+        <span class="card-arrow">→</span>
+      </a>
+    </div>
+  </section>
+
+  <section class="category" data-accent="magenta">
+    <div class="cat-header">
+      <h2>NOTE</h2>
+      <div class="gauge" data-fill="5"></div>
+    </div>
+    <div class="cards">
+      <a class="card" href="https://note.com/yuumaru2024/n/n9bdd4515a81f" target="_blank" rel="noopener">
+        <span class="card-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 19V5a1 1 0 0 1 1-1h9l6 6v9a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1Z"/><path d="M14 4v6h6"/></svg>
+        </span>
+        <span class="card-body">
+          <span class="card-title">INFINITAS ☆11初エクハ履歴</span>
+          <span class="card-url">note.com/yuumaru2024</span>
+        </span>
+        <span class="card-arrow">→</span>
+      </a>
+      <a class="card" href="https://note.com/yuumaru2024/n/n9d9859b7091e" target="_blank" rel="noopener">
+        <span class="card-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 19V5a1 1 0 0 1 1-1h9l6 6v9a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1Z"/><path d="M14 4v6h6"/></svg>
+        </span>
+        <span class="card-body">
+          <span class="card-title">INFINITAS ☆12初ハード履歴</span>
+          <span class="card-url">note.com/yuumaru2024</span>
+        </span>
+        <span class="card-arrow">→</span>
+      </a>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <span>© ゆうまる</span>
+  <span>beatmania IIDX INFINITAS / GITADORA</span>
+</footer>
+
+<script>
+  // hero loading gauge
+  var heroGauge = document.getElementById('heroGauge');
+  var HERO_SEGMENTS = 36;
+  for (var i = 0; i < HERO_SEGMENTS; i++) {
+    var s = document.createElement('span');
+    s.style.animationDelay = (i * 0.02) + 's';
+    var hue = i < 24 ? '#47d7e0' : (i < 32 ? '#ffb84f' : '#ff5d8f');
+    s.style.background = hue;
+    heroGauge.appendChild(s);
+  }
+
+  // category groove gauges (decorative, partially lit)
+  document.querySelectorAll('.gauge').forEach(function(g){
+    var total = 28;
+    var lit = parseInt(g.getAttribute('data-fill'), 10) || 0;
+    for (var i = 0; i < total; i++) {
+      var s = document.createElement('span');
+      if (i < lit) s.classList.add('lit');
+      g.appendChild(s);
+    }
+  });
+</script>
+</body>
+</html>
