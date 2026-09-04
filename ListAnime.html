@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>観たアニメ一覧</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@500;700&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #10151c;
+    --panel: #161d25;
+    --panel-alt: #1c242e;
+    --line: #2a343f;
+    --text: #e9edf1;
+    --text-dim: #93a1ae;
+    --text-faint: #5d6b78;
+    --accent: #e0a458;
+    --accent-soft: #7a5c39;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:'Zen Kaku Gothic New', 'Hiragino Kaku Gothic ProN', 'Yu Gothic', sans-serif;
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+  }
+  a{color:inherit;}
+
+  /* ---------- header ---------- */
+  header{
+    position:sticky;
+    top:0;
+    z-index:10;
+    background:rgba(16,21,28,0.94);
+    backdrop-filter:blur(6px);
+    border-bottom:1px solid var(--line);
+    padding:28px 24px 18px;
+  }
+  .header-inner{
+    max-width:920px;
+    margin:0 auto;
+  }
+  .title-row{
+    display:flex;
+    align-items:baseline;
+    justify-content:space-between;
+    flex-wrap:wrap;
+    gap:8px 20px;
+    margin-bottom:18px;
+  }
+  h1{
+    font-family:'Shippori Mincho', serif;
+    font-weight:700;
+    font-size:1.7rem;
+    margin:0;
+    letter-spacing:0.04em;
+  }
+  .meta{
+    color:var(--text-faint);
+    font-size:0.82rem;
+    letter-spacing:0.02em;
+  }
+  .meta strong{color:var(--accent-soft);font-weight:500;}
+
+  .legend{
+    color:var(--text-dim);
+    font-size:0.8rem;
+    line-height:1.9;
+    margin:2px 0 20px;
+  }
+  .legend .note{color:var(--text); display:block; margin-bottom:8px; font-size:0.85rem;}
+  .legend .row{display:flex; gap:8px; align-items:baseline;}
+  .legend .stars{color:var(--accent); flex:0 0 3.4em;}
+
+  .controls{
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+    align-items:center;
+  }
+  #search{
+    flex:1 1 220px;
+    background:var(--panel-alt);
+    border:1px solid var(--line);
+    color:var(--text);
+    padding:9px 14px;
+    border-radius:3px;
+    font-size:0.92rem;
+    font-family:inherit;
+    outline:none;
+    transition:border-color .15s ease;
+  }
+  #search::placeholder{color:var(--text-faint);}
+  #search:focus{border-color:var(--accent-soft);}
+
+  .chip{
+    background:transparent;
+    border:1px solid var(--line);
+    color:var(--text-dim);
+    padding:8px 14px;
+    border-radius:3px;
+    font-size:0.85rem;
+    font-family:inherit;
+    cursor:pointer;
+    white-space:nowrap;
+    transition:border-color .15s ease, color .15s ease, background .15s ease;
+  }
+  .chip:hover{border-color:var(--accent-soft); color:var(--text);}
+  .chip.active{
+    background:var(--accent-soft);
+    border-color:var(--accent-soft);
+    color:var(--bg);
+    font-weight:500;
+  }
+
+  /* ---------- year jump strip ---------- */
+  #yearstrip{
+    max-width:920px;
+    margin:14px auto 0;
+    display:flex;
+    gap:2px 10px;
+    flex-wrap:wrap;
+    font-size:0.74rem;
+    color:var(--text-faint);
+    padding-top:14px;
+    border-top:1px solid var(--line);
+  }
+  #yearstrip a{
+    text-decoration:none;
+    color:var(--text-faint);
+    padding:2px 3px;
+  }
+  #yearstrip a:hover{color:var(--accent);}
+
+  /* ---------- body ---------- */
+  main{
+    max-width:920px;
+    margin:0 auto;
+    padding:10px 24px 90px;
+  }
+
+  .year-block{
+    display:flex;
+    gap:28px;
+    padding:34px 0 8px;
+    border-top:1px solid var(--line);
+    scroll-margin-top:150px;
+  }
+  .year-block:first-child{border-top:none;}
+
+  .year-label{
+    flex:0 0 96px;
+    font-family:'Shippori Mincho', serif;
+    font-size:2.1rem;
+    font-weight:700;
+    color:var(--accent);
+    line-height:1;
+    padding-top:2px;
+  }
+  .year-label span{
+    display:block;
+    font-family:'Zen Kaku Gothic New', sans-serif;
+    font-size:0.72rem;
+    font-weight:400;
+    color:var(--text-faint);
+    margin-top:6px;
+    letter-spacing:0.05em;
+  }
+
+  .entries{
+    flex:1;
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:2px 28px;
+  }
+  .entry{
+    display:flex;
+    align-items:baseline;
+    justify-content:space-between;
+    gap:12px;
+    padding:7px 0;
+    border-bottom:1px solid rgba(42,52,63,0.5);
+  }
+  .entry-title{
+    font-size:0.92rem;
+    color:var(--text);
+  }
+  .meter{
+    flex:0 0 auto;
+    font-size:0.8rem;
+    letter-spacing:1px;
+    color:var(--accent);
+    white-space:nowrap;
+  }
+
+  .hidden{display:none !important;}
+
+  #empty-state{
+    display:none;
+    text-align:center;
+    color:var(--text-faint);
+    padding:60px 0;
+    font-size:0.9rem;
+  }
+
+  @media (max-width:640px){
+    .entries{grid-template-columns:1fr;}
+    .year-block{gap:16px; padding:26px 0 4px;}
+    .year-label{flex-basis:64px; font-size:1.5rem;}
+    h1{font-size:1.4rem;}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div class="title-row">
+      <h1>観たアニメ一覧</h1>
+      <div class="meta">1989年 〜 2026年 ・ <strong id="totalCount">0</strong> 作品</div>
+    </div>
+    <div class="legend">
+      <span class="note">リアルタイムで見ていないものが多いかも？</span>
+      <span class="row"><span class="stars">☆</span>一応全部観たはず</span>
+      <span class="row"><span class="stars">☆☆</span>全部観た(見てないシーズンもあるかも)</span>
+      <span class="row"><span class="stars">☆☆☆</span>２周以上観た</span>
+    </div>
+    <div class="controls">
+      <input id="search" type="text" placeholder="タイトルで検索…">
+      <button class="chip active" data-filter="all">すべて</button>
+      <button class="chip" data-filter="3">☆☆☆</button>
+      <button class="chip" data-filter="2">☆☆</button>
+      <button class="chip" data-filter="1">☆</button>
+      <button class="chip" data-filter="0">未評価</button>
+    </div>
+  </div>
+  <div id="yearstrip"></div>
+</header>
+
+<main>
+  <div id="listing"></div>
+  <div id="empty-state">該当する作品が見つかりませんでした</div>
+</main>
+
+<script>
+// [year, title, stars(0-3)]
+const DATA = [
+[1989,"ドラゴンボールZ",2],
+[1992,"まじかる☆タルるートくん",0],
+[1993,"ジャングルの王者ターちゃん",3],
+[1995,"新機動戦記ガンダムW",3],
+[1995,"NINKU -忍空-",0],
+[1995,"魔法陣グルグル",3],
+[1995,"幽☆遊☆白書",0],
+[1996,"地獄先生ぬ〜べ〜",0],
+[1996,"ドラゴンボールGT",3],
+[1996,"爆走兄弟レッツ&ゴー!!",0],
+[1996,"ぼのぼの",0],
+[1996,"みどりのマキバオー",0],
+[1996,"るろうに剣心 -明治剣客浪漫譚-",0],
+[1997,"学級王ヤマザキ",0],
+[1997,"烈火の炎",0],
+[1998,"たこやきマントマン",0],
+[1999,"おジャ魔女どれみ",0],
+[1999,"サイボーグクロちゃん",0],
+[1999,"仙界伝 封神演義",0],
+[1999,"デジモンアドベンチャー",0],
+[2001,"グラップラー刃牙",2],
+[2001,"ヒカルの碁",3],
+[2003,"ボボボーボ・ボーボボ",0],
+[2006,"涼宮ハルヒの憂鬱",3],
+[2006,"ひぐらしのなく頃に",3],
+[2007,"逆境無頼カイジ",2],
+[2007,"DARKER THAN BLACK -黒の契約者-",2],
+[2007,"らき☆すた",0],
+[2008,"ストライクウィッチーズ",1],
+[2008,"とある魔術の禁書目録",2],
+[2008,"とらドラ!",3],
+[2009,"けいおん!",2],
+[2009,"咲-Saki-",3],
+[2009,"とある科学の超電磁砲",2],
+[2009,"化物語",0],
+[2009,"東のエデン",1],
+[2010,"荒川アンダー ザ ブリッジ",2],
+[2010,"えむえむっ!",2],
+[2010,"俺の妹がこんなに可愛いわけがない",2],
+[2010,"侵略!イカ娘",2],
+[2010,"WORKING!!",1],
+[2011,"青の祓魔師",1],
+[2011,"あの日見た花の名前を僕達はまだ知らない。",2],
+[2011,"IS 〈インフィニット・ストラトス〉",1],
+[2011,"ギルティクラウン",1],
+[2011,"これはゾンビですか?",2],
+[2011,"C",1],
+[2011,"C³ -シーキューブ-",2],
+[2011,"STEINS;GATE",2],
+[2011,"TIGER & BUNNY",2],
+[2011,"日常",2],
+[2011,"花咲くいろは",2],
+[2011,"緋弾のアリア",2],
+[2011,"Fate/Zero",2],
+[2011,"僕は友達が少ない",2],
+[2011,"魔法少女まどか☆マギカ",2],
+[2011,"未来日記",0],
+[2011,"ゆるゆり",3],
+[2012,"アクセル・ワールド",0],
+[2012,"Another",2],
+[2012,"妖狐×僕SS",2],
+[2012,"織田信奈の野望",2],
+[2012,"お兄ちゃんだけど愛さえあれば関係ないよねっ",2],
+[2012,"ガールズ&パンツァー",2],
+[2012,"ココロコネクト",0],
+[2012,"PSYCHO-PASS サイコパス",2],
+[2012,"さくら荘のペットな彼女",0],
+[2012,"ジョジョの奇妙な冒険",1],
+[2012,"人類は衰退しました",1],
+[2012,"ソードアート・オンライン",2],
+[2012,"TARI TARI",2],
+[2012,"男子高校生の日常",2],
+[2012,"中二病でも恋がしたい!",2],
+[2012,"偽物語",0],
+[2012,"這いよれ! ニャル子さん",0],
+[2012,"氷菓",0],
+[2013,"あいうら",0],
+[2013,"アウトブレイク・カンパニー",2],
+[2013,"惡の華",0],
+[2013,"犬とハサミは使いよう",2],
+[2013,"俺の彼女と幼なじみが修羅場すぎる",3],
+[2013,"俺の脳内選択肢が、学園ラブコメを全力で邪魔している",0],
+[2013,"キルラキル",0],
+[2013,"きんいろモザイク",2],
+[2013,"GJ部",3],
+[2013,"ゴールデンタイム",2],
+[2013,"サーバント×サービス",0],
+[2013,"進撃の巨人",2],
+[2013,"ストライク・ザ・ブラッド",2],
+[2013,"ダンガンロンパ",1],
+[2013,"超次元ゲイム ネプテューヌ",1],
+[2013,"デート・ア・ライブ",1],
+[2013,"てさぐれ!部活もの",0],
+[2013,"凪のあすから",0],
+[2013,"のんのんびより",1],
+[2013,"はたらく魔王さま!",1],
+[2013,"ビビッドレッド・オペレーション",2],
+[2013,"変態王子と笑わない猫。",0],
+[2013,"機巧少女は傷つかない",2],
+[2013,"問題児たちが異世界から来るそうですよ?",2],
+[2013,"やはり俺の青春ラブコメはまちがっている。",1],
+[2013,"ラブライブ!",3],
+[2013,"恋愛ラボ",0],
+[2013,"私がモテないのはどう考えてもお前らが悪い!",2],
+[2014,"アオハライド",2],
+[2014,"悪魔のリドル",0],
+[2014,"甘城ブリリアントパーク",2],
+[2014,"一週間フレンズ。",2],
+[2014,"異能バトルは日常系のなかで",1],
+[2014,"俺、ツインテールになります。",2],
+[2014,"彼女がフラグをおられたら",2],
+[2014,"月刊少女野崎くん",2],
+[2014,"健全ロボ ダイミダラー",1],
+[2014,"極黒のブリュンヒルデ",0],
+[2014,"ご注文はうさぎですか?",2],
+[2014,"最近、妹のようすがちょっとおかしいんだが。",1],
+[2014,"桜Trick",2],
+[2014,"SHIROBAKO",0],
+[2014,"人生相談テレビアニメーション「人生」",0],
+[2014,"精霊使いの剣舞",2],
+[2014,"世界征服〜謀略のズヴィズダー〜",2],
+[2014,"天体のメソッド",0],
+[2014,"ディーふらぐ!",2],
+[2014,"となりの関くん",2],
+[2014,"トリニティセブン",0],
+[2014,"ニセコイ",1],
+[2014,"のうりん",1],
+[2014,"ノーゲーム・ノーライフ",2],
+[2014,"ハナヤマタ",2],
+[2014,"ひめゴト",1],
+[2014,"普通の女子校生が【ろこどる】やってみた。",0],
+[2014,"ブラック・ブレット",2],
+[2014,"未確認で進行形",2],
+[2015,"アイドルマスター シンデレラガールズ",1],
+[2015,"赤髪の白雪姫",1],
+[2015,"アブソリュート・デュオ",1],
+[2015,"俺物語!!",1],
+[2015,"終わりのセラフ",1],
+[2015,"学戦都市アスタリスク",0],
+[2015,"がっこうぐらし!",1],
+[2015,"冴えない彼女の育てかた",2],
+[2015,"下ネタという概念が存在しない退屈な世界",1],
+[2015,"SHOW BY ROCK!!",2],
+[2015,"新妹魔王の契約者",0],
+[2015,"聖剣使いの禁呪詠唱",0],
+[2015,"ダンジョンに出会いを求めるのは間違っているだろうか",0],
+[2015,"響け!ユーフォニアム",1],
+[2015,"干物妹!うまるちゃん",2],
+[2015,"プラスティック・メモリーズ",3],
+[2015,"放課後のプレアデス",1],
+[2016,"蒼の彼方のフォーリズム",1],
+[2016,"ガーリッシュ ナンバー",1],
+[2016,"くまみこ",0],
+[2016,"この素晴らしい世界に祝福を!",1],
+[2016,"最弱無敗の神装機竜",0],
+[2016,"坂本ですが?",1],
+[2016,"装神少女まとい",2],
+[2016,"NEW GAME!",2],
+[2016,"ネトゲの嫁は女の子じゃないと思った?",0],
+[2016,"ハイスクール・フリート",2],
+[2016,"Re:ゼロから始める異世界生活",3],
+[2016,"ReLIFE",2],
+[2017,"アホガール",2],
+[2017,"異世界はスマートフォンとともに。",0],
+[2017,"エロマンガ先生",2],
+[2017,"ガヴリールドロップアウト",2],
+[2017,"賭ケグルイ",2],
+[2017,"ゲーマーズ!",1],
+[2017,"けものフレンズ",0],
+[2017,"小林さんちのメイドラゴン",0],
+[2017,"終末なにしてますか? 忙しいですか? 救ってもらっていいですか?",1],
+[2017,"少女終末旅行",0],
+[2017,"天使の3P!",1],
+[2017,"はじめてのギャル",0],
+[2017,"BanG Dream!",1],
+[2017,"ひなこのーと",0],
+[2017,"風夏",0],
+[2017,"ブレンド・S",2],
+[2018,"ヴァイオレット・エヴァーガーデン",2],
+[2018,"からかい上手の高木さん",1],
+[2018,"Citrus",3],
+[2018,"ソードアート・オンライン アリシゼーション",2],
+[2018,"ソードアート・オンライン オルタナティブ ガンゲイル・オンライン",2],
+[2018,"ゾンビランドサガ",1],
+[2018,"転生したらスライムだった件",0],
+[2018,"となりの吸血鬼さん",1],
+[2018,"ハイスコアガール",1],
+[2018,"はたらく細胞",1],
+[2018,"ヒナまつり",1],
+[2018,"やがて君になる",3],
+[2019,"アサシンズプライド",1],
+[2019,"かぐや様は告らせたい〜天才たちの恋愛頭脳戦〜",1],
+[2019,"五等分の花嫁",0],
+[2019,"女子高生の無駄づかい",1],
+[2019,"Dr.STONE",2],
+[2020,"安達としまむら",2],
+[2020,"宇崎ちゃんは遊びたい!",1],
+[2020,"彼女、お借りします",0],
+[2020,"22/7",1],
+[2020,"無能なナナ",1],
+[2021,"イジらないで、長瀞さん",2],
+[2021,"ジャヒー様はくじけない!",1],
+[2021,"先輩がうざい後輩の話",1],
+[2021,"無職転生 〜異世界行ったら本気だす〜",2],
+[2022,"異世界おじさん",1],
+[2022,"その着せ替え人形は恋をする",2],
+[2022,"それでも歩は寄せてくる",2],
+[2022,"チェンソーマン",2],
+[2022,"ぼっち・ざ・ろっく!",2],
+[2022,"ポプテピピック",1],
+[2023,"【推しの子】",2],
+[2023,"お兄ちゃんはおしまい!",3],
+[2023,"薬屋のひとりごと",1],
+[2023,"SPY×FAMILY",0],
+[2023,"葬送のフリーレン",3],
+[2023,"僕の心のヤバイやつ",2],
+[2024,"しかのこのこのここしたんたん",1],
+[2024,"時々ボソッとロシア語でデレる隣のアーリャさん",0],
+[2025,"タコピーの原罪",2],
+[2025,"わたしが恋人になれるわけないじゃん、ムリムリ!（※ムリじゃなかった!?）",1],
+[2026,"オタクに優しいギャルはいない!?",1],
+[2026,"死亡遊戯で飯を食う。",0],
+[2026,"左ききのエレン",0],
+[2026,"LV999の村人",2],
+];
+
+document.getElementById('totalCount').textContent = DATA.length;
+
+const years = [...new Set(DATA.map(d => d[0]))].sort((a,b) => a-b);
+
+const yearstrip = document.getElementById('yearstrip');
+years.forEach(y => {
+  const a = document.createElement('a');
+  a.href = '#y' + y;
+  a.textContent = y;
+  yearstrip.appendChild(a);
+});
+
+const listing = document.getElementById('listing');
+const blocksByYear = {};
+
+years.forEach(y => {
+  const block = document.createElement('div');
+  block.className = 'year-block';
+  block.id = 'y' + y;
+
+  const label = document.createElement('div');
+  label.className = 'year-label';
+  label.innerHTML = y + '<span>年</span>';
+  block.appendChild(label);
+
+  const entries = document.createElement('div');
+  entries.className = 'entries';
+  block.appendChild(entries);
+
+  blocksByYear[y] = { block, entries };
+  listing.appendChild(block);
+});
+
+function meterHTML(stars){
+  if(stars === 0) return '';
+  return `<span class="meter">${'☆'.repeat(stars)}</span>`;
+}
+
+const rowEls = [];
+
+DATA.forEach(([year, title, stars]) => {
+  const row = document.createElement('div');
+  row.className = 'entry';
+  row.dataset.stars = stars;
+  row.dataset.title = title.toLowerCase();
+  row.innerHTML = `<span class="entry-title">${title}</span>${meterHTML(stars)}`;
+  blocksByYear[year].entries.appendChild(row);
+  rowEls.push(row);
+});
+
+let activeFilter = 'all';
+let query = '';
+
+function applyFilters(){
+  let anyVisible = false;
+  rowEls.forEach(row => {
+    const matchesFilter = activeFilter === 'all' || row.dataset.stars === activeFilter;
+    const matchesQuery = !query || row.dataset.title.includes(query);
+    const show = matchesFilter && matchesQuery;
+    row.classList.toggle('hidden', !show);
+    if(show) anyVisible = true;
+  });
+  years.forEach(y => {
+    const { block, entries } = blocksByYear[y];
+    const visibleCount = [...entries.children].filter(r => !r.classList.contains('hidden')).length;
+    block.classList.toggle('hidden', visibleCount === 0);
+  });
+  document.getElementById('empty-state').style.display = anyVisible ? 'none' : 'block';
+}
+
+document.getElementById('search').addEventListener('input', e => {
+  query = e.target.value.trim().toLowerCase();
+  applyFilters();
+});
+
+document.querySelectorAll('.chip').forEach(chip => {
+  chip.addEventListener('click', () => {
+    document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+    chip.classList.add('active');
+    activeFilter = chip.dataset.filter;
+    applyFilters();
+  });
+});
+</script>
+</body>
+</html>
