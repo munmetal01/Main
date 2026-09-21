@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<title>プレイしたゲーム PCなど編</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DotGothic16&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #f3f4f7;
+  --surface: #ffffff;
+  --ink: #1f2433;
+  --ink-2: #596074;
+  --line: #dcdfe7;
+  --accent: #3949ab;
+  --mark: #ffe9a8;
+  --pixel: "DotGothic16", "Hiragino Sans", "Yu Gothic", "Meiryo", monospace;
+  --body: "Zen Kaku Gothic New", "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Yu Gothic", "Meiryo", sans-serif;
+  box-sizing: border-box;
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #14161d;
+    --surface: #1c2029;
+    --ink: #e9ebf1;
+    --ink-2: #a0a7b8;
+    --line: #2d3343;
+    --accent: #8c9eff;
+    --mark: #5a4a12;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #14161d;
+  --surface: #1c2029;
+  --ink: #e9ebf1;
+  --ink-2: #a0a7b8;
+  --line: #2d3343;
+  --accent: #8c9eff;
+  --mark: #5a4a12;
+}
+html { scroll-padding-top: env(safe-area-inset-top, 0px); scroll-behavior: smooth; }
+*, *::before, *::after { box-sizing: inherit; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--body);
+  line-height: 1.7;
+  -webkit-text-size-adjust: 100%;
+}
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.wrap { max-width: 1080px; margin: 0 auto; padding: 0 1.25rem; }
+
+/* hero */
+.hero { padding-top: 2.75rem; padding-bottom: 1.25rem; }
+h1 {
+  font-family: var(--pixel);
+  font-weight: 400;
+  font-size: clamp(2rem, 6.4vw, 3.5rem);
+  line-height: 1.2;
+  letter-spacing: .02em;
+  margin: 0;
+}
+.sub { margin: .9rem 0 0; color: var(--ink-2); max-width: 36rem; }
+
+/* proportional bar: one segment per console, width = number of games */
+.spine {
+  display: flex;
+  gap: 2px;
+  height: 44px;
+  margin: 1.75rem 0 1rem;
+  padding: 0;
+  list-style: none;
+  animation: reveal 1s cubic-bezier(.2, .7, .2, 1) both;
+}
+.spine li { flex: var(--n) 1 0%; min-width: 8px; transition: opacity .2s; }
+.spine a { display: block; height: 100%; background: var(--c); }
+.spine li.dim { opacity: .2; }
+@keyframes reveal {
+  from { clip-path: inset(0 100% 0 0); }
+  to { clip-path: inset(0 0 0 0); }
+}
+
+.legend {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(9.75rem, 1fr));
+  gap: .1rem .75rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  transition: opacity .2s;
+}
+.legend li { transition: opacity .2s; }
+.legend li.dim { opacity: .35; }
+.legend a {
+  display: flex;
+  align-items: baseline;
+  gap: .55rem;
+  padding: .4rem .35rem;
+  color: inherit;
+  text-decoration: none;
+  border-radius: 6px;
+}
+.legend a:hover { background: var(--surface); }
+.legend i { width: .7rem; height: .7rem; background: var(--c); flex: none; align-self: center; }
+.legend .n { margin-left: auto; font-family: var(--pixel); color: var(--ink-2); }
+
+/* sticky search / filter */
+.tools {
+  position: sticky;
+  top: env(safe-area-inset-top, 0px);
+  z-index: 5;
+  padding: .75rem 0 .6rem;
+  background: var(--bg);
+  border-bottom: 1px solid var(--line);
+}
+input[type="search"] {
+  display: block;
+  width: 100%;
+  font: inherit;
+  font-size: 1rem;
+  padding: .65rem .95rem;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--surface);
+  color: var(--ink);
+}
+input[type="search"]::placeholder { color: var(--ink-2); }
+.chips {
+  display: flex;
+  gap: .4rem;
+  margin-top: .6rem;
+  padding-bottom: .2rem;
+  overflow-x: auto;
+  scrollbar-width: thin;
+}
+.chip {
+  flex: none;
+  font: inherit;
+  font-size: .875rem;
+  line-height: 1.5;
+  padding: .3rem .8rem;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  color: var(--ink);
+  cursor: pointer;
+}
+.chip:hover { border-color: var(--ink-2); }
+.chip .c { margin-left: .35em; font-size: .8em; color: var(--ink-2); }
+.chip[aria-pressed="true"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+.chip[aria-pressed="true"] .c { color: inherit; opacity: .7; }
+
+/* list */
+.status { margin: 1.25rem 0 0; font-size: .9rem; color: var(--ink-2); min-height: 1.6em; }
+.plat { margin-top: 2.5rem; scroll-margin-top: 9rem; }
+.plat[hidden] { display: none; }
+.plat-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: .2rem 1rem;
+  padding-top: .85rem;
+  border-top: 4px solid var(--c);
+}
+.plat-head h2 { font-family: var(--pixel); font-weight: 400; font-size: 1.75rem; line-height: 1.2; margin: 0; }
+.plat-head .meta { font-size: .9rem; color: var(--ink-2); }
+.plat-head .count { margin-left: auto; font-family: var(--pixel); font-size: 1.2rem; }
+.games { list-style: none; margin: .9rem 0 0; padding: 0; columns: 17rem 3; column-gap: 2rem; }
+.games li { break-inside: avoid; padding: .45rem 0; border-bottom: 1px solid var(--line); line-height: 1.5; }
+.also {
+  margin-left: .5em;
+  padding: 0 .4em;
+  font-size: .72rem;
+  color: var(--ink-2);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  white-space: nowrap;
+}
+mark { background: var(--mark); color: inherit; border-radius: 2px; }
+.empty {
+  margin: 3rem 0;
+  padding: 2.25rem 1.25rem;
+  text-align: center;
+  color: var(--ink-2);
+  border: 1px dashed var(--line);
+  border-radius: 12px;
+}
+footer { margin-top: 4rem; margin-bottom: 3rem; font-size: .85rem; color: var(--ink-2); }
+
+@media (max-width: 520px) {
+  .hero { padding-top: 2rem; }
+  .spine { height: 36px; }
+  .plat-head h2 { font-size: 1.5rem; }
+}
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .spine { animation: none; }
+  .spine li, .legend li { transition: none; }
+}
+</style>
+</head>
+<body>
+
+<header class="hero wrap">
+  <h1>プレイしたゲーム PCなど編</h1>
+  <p class="sub">PC・Steam・ワンダースワン・アーケードの4区分、全192本。</p>
+  <ol class="spine" id="spine" aria-label="区分ごとのプレイ本数の割合"></ol>
+  <nav aria-label="区分へ移動"><ul class="legend" id="legend"></ul></nav>
+</header>
+
+<div class="tools">
+  <div class="wrap">
+    <input type="search" id="q" placeholder="タイトルで検索（ひらがなでもOK）" aria-label="タイトルを検索" autocomplete="off">
+    <div class="chips" id="chips" role="group" aria-label="シリーズで絞り込む"></div>
+  </div>
+</div>
+
+<main class="wrap">
+  <p class="status" id="status" role="status" aria-live="polite"></p>
+  <div id="platforms"></div>
+  <div class="empty" id="empty" hidden>該当するゲームがありません。キーワードを変えるか、シリーズの選択を外してください。</div>
+</main>
+
+<footer class="wrap">同じタイトルを複数の区分で遊んだ場合は、それぞれの区分に載せています。</footer>
+
+<script>
+(function () {
+  'use strict';
+
+  var DATA = [{"id": "pc", "name": "PC", "short": "PC", "year": null, "color": "#5c6bc0", "games": ["Age of Empires", "Age of Empires II", "Age of Empires III", "Balloon De Fight'2000", "beatmania INFINITAS", "beatmania打!!", "beatmania打打打!!", "BM98", "Diablo2", "Diablo3", "Diablo4", "DJMAX", "DTXMania", "Empire Earth", "Exorcism Breathe", "FINAL FANTASY VII", "GITADORAコナステ", "Grand Theft Auto: Vice City", "Grand Theft Auto: San Andreas", "Hellgate: London", "I Wanna Be the Guy", "Minecraft", "Minecraft DQM(mod)", "Minecraft L_Ender 's Cataclysm(mod)", "Minecraft Mine and Slash(mod)", "mugen", "O2JAM", "OSU", "OUTLIVE ONLINE", "OVERWATCH", "SimCity 2000", "SimCity 3000", "STEINS;GATE 8bit", "Ultima Online", "Warlords Battlecry III", "World of Warcraft", "青鬼", "アラド戦記", "神姫PROJECT", "キーボードモンスターズ", "キャラバン", "ギルティクラウン ロストクリスマス", "ザ・コンビニ4", "雀魂", "新テーマパーク 遊園地をつくろう", "特打", "ひぐらしのなく頃に", "ひぐらしのなく頃に解", "宝石姫", "魔法の塔", "ラグナロクオンライン", "龍が如く7"]}, {"id": "steam", "name": "Steam", "short": "Steam", "year": null, "color": "#17a2a2", "games": ["7 Days to Die", "7 Days to Die Darkness Falls(mod)", "7 Days to Die Rebirth(mod)", "7 Days to Die War3zuk(mod)", "A Dance of Fire and Ice", "ASTRONEER", "ATLAS", "Baba Is You", "Backpack Hero", "Balatro", "BALL x PIT", "Bloons TD 6", "Borderlands", "Borderlands 2", "Borderlands 3", "Borderlands: The Pre-Sequel", "BPM: BULLETS PER MINUTE", "Cat Quest", "Cat Quest II", "Cat Quest III", "Clair Obscur: Expedition 33", "Conan Exiles", "Core Keeper", "DARK SOULS: REMASTERED", "DARK SOULS II: Scholar of the First Sin", "DARK SOULS III", "Deemo -Reborn-", "Deep Rock Galactic", "DJMAX RESPECT V", "Don't Starve Together", "Dungeon Antiqua", "ELDEN RING NIGHTREIGN", "ENDER LILIES: Quietus of the Knights", "Factorio", "Fallout 76", "FINAL FANTASY PIXEL REMASTER", "FINAL FANTASY VIII - REMASTERED", "FINAL FANTASY IX", "FINAL FANTASY X/X-2 HD Remaster", "For The King", "FTL: Faster Than Light", "Getting Over It with Bennett Foddy", "Grand Theft Auto: San Andreas", "Grand Theft Auto V", "Groove Coaster", "Gunfire Reborn", "Hollow Knight", "How to Survive", "Inscryption", "Killing Floor", "Left 4 Dead 2", "Metal: Hellsinger", "Muse Dash", "Path of Exile", "PAYDAY 2", "Portal", "Portal Knights", "Raft", "Red Dead Online", "Risk of Rain 2", "Rogue Legacy", "Rogue Legacy 2", "Salt and Sanctuary", "Satisfactory", "Sea of Thieves", "Sekiro: Shadows Die Twice", "Shape of Dreams", "Sid Meier's Civilization VI", "Slay the Spire", "Slay the Spire 2", "Stardew Valley", "Starfield", "Super Fantasy Kingdom", "Supermarket Simulator", "Team Fortress 2", "Terraria", "The Elder Scrolls V: Skyrim", "The Past Within", "Timberman", "Titan Quest", "Ultimate Chicken Horse", "Undertale", "Valheim", "Vampire Suvivors", "Warframe", "Yu-Gi-Oh! Master Duel", "ウィッチャー3", "片道勇者", "クロノ・トリガー", "ダンジョンクロウラー幸運ウサギと魔法の爪", "違う冬のぼくら", "トライブス オブ ミッドガルド", "ドラゴンクエストI&II", "ドラゴンクエストIII そして伝説へ...", "ドラゴンクエストVII Reimagined", "ドラゴンクエストXI 過ぎ去りし時を求めて S", "ドラゴンクエストビルダーズ2 破壊神シドーとからっぽの島", "ドラゴンクエストモンスターズ3 魔族の王子とエルフの旅", "ファイナルファンタジータクティクス - イヴァリースクロニクルズ", "ぷよぷよテトリス 2", "プレートアップ！", "ほりほりドリル", "モンスターハンターライズ", "モンスターハンターワールド", "モンスターハンターワイルズ", "ゆんゆん電波シンドローム", "ロックマンクラシックスコレクション", "ロックマンクラシックスコレクション 2", "ロマンシングサガ2 リベンジオブザセブン", "幸運の大家様", "初音ミク Project DIVA MEGA39's+", "東方ダンマクカグラ ファンタジア・ロスト", "農家はReplace()されました", "不思議のクロニクル 振リ返リマセン勝ツマデハ", "不思議のダンジョン 風来のシレン5plus フォーチュンタワーと運命のダイス", "不思議のダンジョン 風来のシレン6 とぐろ島探検録"]}, {"id": "ws", "name": "ワンダースワン", "short": "WS", "year": 1999, "color": "#f0a020", "games": ["チョコボの不思議なダンジョン for ワンダースワン", "beatmania for WonderSwan"]}, {"id": "arcade", "name": "アーケード", "short": "AC", "year": null, "color": "#d6455d", "games": ["beatmania 3rd-7thmix", "beatmania clubMIX", "beatmania completeMIX", "beatmania completeMIX2", "beatmania featuring DREAMS COME TRUE", "beatmania THE FINAL", "beatmania IIDX 13～18", "Dance Dance Revolution 3rdMIX", "GUITARFREAKS 1～V8", "GUITARFREAKS XG1～3", "drummania 1～V8", "drummania XG1～3", "GITADORA", "pop'n music 13～14", "jubeat", "REFLEC BEAT", "SOUND VOLTEX", "オンゲキ 初代～bright", "THE KING OF FIGHTERS 2000", "MARVEL SUPER HEROES VS STREET FIGHTER", "MARVEL VS CAPCOM", "MARVEL VS CAPCOM 2"]}];
+
+  // series filters: keys are matched against the title
+  var SERIES = [
+    ["BEMANI", ["beatmania", "GITADORA", "GUITARFREAKS", "drummania", "Dance Dance Revolution", "pop'n music", "jubeat", "REFLEC BEAT", "SOUND VOLTEX", "オンゲキ"]],
+    ["リズム・音ゲー", ["beatmania", "GITADORA", "GUITARFREAKS", "drummania", "Dance Dance Revolution", "pop'n music", "jubeat", "REFLEC BEAT", "SOUND VOLTEX", "オンゲキ", "BM98", "DJMAX", "DTXMania", "O2JAM", "=OSU", "Muse Dash", "Groove Coaster", "A Dance of Fire and Ice", "Deemo", "初音ミク", "東方ダンマクカグラ", "Metal: Hellsinger", "BPM: BULLETS PER MINUTE"]],
+    ["ドラゴンクエスト", ["ドラゴンクエスト"]],
+    ["ファイナルファンタジー", ["ファイナルファンタジー", "FINAL FANTASY"]],
+    ["DARK SOULS", ["DARK SOULS"]],
+    ["Diablo", ["Diablo"]],
+    ["Grand Theft Auto", ["Grand Theft Auto"]],
+    ["Minecraft", ["Minecraft"]],
+    ["7 Days to Die", ["7 Days to Die"]],
+    ["Borderlands", ["Borderlands"]],
+    ["Age of Empires", ["Age of Empires"]],
+    ["モンスターハンター", ["モンスターハンター"]],
+    ["Cat Quest", ["Cat Quest"]],
+    ["MARVEL", ["MARVEL"]]
+  ];
+  var MIN_SERIES = 3;
+
+  // ---- text folding: width, case, hiragana -> katakana, no spaces / middle dots
+  function fold(ch) {
+    return ch.normalize('NFKC').toLowerCase()
+      .replace(/[\u3041-\u3096]/g, function (c) { return String.fromCharCode(c.charCodeAt(0) + 0x60); })
+      .replace(/[\s\u30fb]/g, '');
+  }
+  function foldMap(s) {
+    var out = '', map = [];
+    for (var i = 0; i < s.length; i++) {
+      var f = fold(s[i]);
+      for (var j = 0; j < f.length; j++) { out += f[j]; map.push(i); }
+    }
+    return { out: out, map: map };
+  }
+
+  var $ = function (id) { return document.getElementById(id); };
+  function el(tag, cls, text) {
+    var e = document.createElement(tag);
+    if (cls) e.className = cls;
+    if (text != null) e.textContent = text;
+    return e;
+  }
+
+  // titles that appear on more than one console
+  var seen = {};
+  DATA.forEach(function (p) {
+    p.games.forEach(function (t) { (seen[t] = seen[t] || []).push(p); });
+  });
+
+  var total = DATA.reduce(function (a, p) { return a + p.games.length; }, 0);
+  var spine = $('spine'), legend = $('legend'), root = $('platforms');
+
+  // ---- build
+  DATA.forEach(function (p) {
+    // proportional bar
+    var sl = el('li');
+    sl.style.setProperty('--n', p.games.length);
+    sl.style.setProperty('--c', p.color);
+    var sa = el('a');
+    sa.href = '#' + p.id;
+    sa.title = p.name + ' ' + p.games.length + '本';
+    sa.setAttribute('aria-label', p.name + ' ' + p.games.length + '本');
+    sl.appendChild(sa);
+    spine.appendChild(sl);
+
+    // legend / nav
+    var ll = el('li');
+    ll.style.setProperty('--c', p.color);
+    var la = el('a');
+    la.href = '#' + p.id;
+    la.appendChild(el('i'));
+    la.appendChild(el('span', '', p.name));
+    p.legendCount = el('span', 'n', String(p.games.length));
+    la.appendChild(p.legendCount);
+    ll.appendChild(la);
+    legend.appendChild(ll);
+
+    // section
+    var sec = el('section', 'plat');
+    sec.id = p.id;
+    sec.style.setProperty('--c', p.color);
+    sec.setAttribute('aria-labelledby', p.id + '-h');
+    var head = el('div', 'plat-head');
+    var h2 = el('h2', '', p.name);
+    h2.id = p.id + '-h';
+    head.appendChild(h2);
+    if (p.year) head.appendChild(el('span', 'meta', p.year + '年発売'));
+    p.countEl = el('span', 'count', p.games.length + '本');
+    head.appendChild(p.countEl);
+    sec.appendChild(head);
+
+    var ul = el('ul', 'games');
+    p.items = p.games.map(function (title) {
+      var li = el('li');
+      var span = el('span', 'title', title);
+      li.appendChild(span);
+      var others = seen[title].filter(function (o) { return o !== p; });
+      if (others.length) {
+        var tag = el('span', 'also', others.map(function (o) { return o.short; }).join('・') + 'でも');
+        tag.title = others.map(function (o) { return o.name; }).join('、') + 'でもプレイ';
+        li.appendChild(tag);
+      }
+      ul.appendChild(li);
+      return { title: title, fm: foldMap(title), li: li, span: span };
+    });
+    sec.appendChild(ul);
+    root.appendChild(sec);
+
+    p.spineLi = sl;
+    p.legendLi = ll;
+    p.sec = sec;
+  });
+
+  // ---- series chips
+  var chips = $('chips');
+  var state = { q: '', series: null };
+  var chipEls = [];
+
+  function matchesKeys(fm, keys) {
+    return keys.some(function (k) { return k.charAt(0) === '=' ? fm.out === k.slice(1) : fm.out.indexOf(k) !== -1; });
+  }
+  SERIES.forEach(function (s) {
+    s.keys = s[1].map(function (k) { return foldMap(k).out; });
+    s.count = 0;
+    DATA.forEach(function (p) {
+      p.items.forEach(function (it) { if (matchesKeys(it.fm, s.keys)) s.count++; });
+    });
+  });
+
+  function makeChip(label, count, series) {
+    var b = el('button', 'chip', label);
+    b.type = 'button';
+    if (count != null) b.appendChild(el('span', 'c', String(count)));
+    b.setAttribute('aria-pressed', 'false');
+    b.addEventListener('click', function () {
+      state.series = (state.series === series) ? null : series;
+      apply();
+    });
+    b._series = series;
+    chips.appendChild(b);
+    chipEls.push(b);
+  }
+  makeChip('すべて', null, null);
+  SERIES.filter(function (s) { return s.count >= MIN_SERIES; }).forEach(function (s) {
+    makeChip(s[0], s.count, s);
+  });
+
+  // ---- filtering
+  function paint(it, q) {
+    var span = it.span;
+    span.textContent = '';
+    if (q) {
+      var i = it.fm.out.indexOf(q);
+      if (i !== -1) {
+        var a = it.fm.map[i], b = it.fm.map[i + q.length - 1] + 1;
+        span.appendChild(document.createTextNode(it.title.slice(0, a)));
+        var m = el('mark', '', it.title.slice(a, b));
+        span.appendChild(m);
+        span.appendChild(document.createTextNode(it.title.slice(b)));
+        return;
+      }
+    }
+    span.textContent = it.title;
+  }
+
+  function apply() {
+    var q = foldMap(state.q.normalize('NFKC')).out;
+    var keys = state.series ? state.series.keys : null;
+    var filtered = !!(q || keys);
+    var shown = 0;
+
+    DATA.forEach(function (p) {
+      var n = 0;
+      p.items.forEach(function (it) {
+        var ok = true;
+        if (q && it.fm.out.indexOf(q) === -1) ok = false;
+        if (ok && keys && !matchesKeys(it.fm, keys)) ok = false;
+        it.li.hidden = !ok;
+        if (ok) n++;
+        paint(it, ok ? q : '');
+      });
+      shown += n;
+      p.sec.hidden = n === 0;
+      p.spineLi.classList.toggle('dim', filtered && n === 0);
+      p.legendLi.classList.toggle('dim', filtered && n === 0);
+      p.countEl.textContent = filtered ? (n + ' / ' + p.games.length + '本') : (p.games.length + '本');
+      p.legendCount.textContent = filtered ? String(n) : String(p.games.length);
+    });
+
+    chipEls.forEach(function (b) {
+      b.setAttribute('aria-pressed', String(b._series === state.series));
+    });
+
+    var parts = [];
+    if (state.series) parts.push(state.series[0]);
+    if (state.q.trim()) parts.push('「' + state.q.trim() + '」');
+    $('status').textContent = filtered
+      ? (parts.join(' × ') + ' に該当：' + shown + '本（全' + total + '本中）')
+      : ('全' + total + '本を表示中');
+    $('empty').hidden = shown !== 0;
+  }
+
+  $('q').addEventListener('input', function (e) {
+    state.q = e.target.value;
+    apply();
+  });
+
+  apply();
+})();
+</script>
+</body>
+</html>
