@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<title>プレイしたゲーム PlayStation編</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DotGothic16&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #f3f4f7;
+  --surface: #ffffff;
+  --ink: #1f2433;
+  --ink-2: #596074;
+  --line: #dcdfe7;
+  --accent: #3949ab;
+  --mark: #ffe9a8;
+  --pixel: "DotGothic16", "Hiragino Sans", "Yu Gothic", "Meiryo", monospace;
+  --body: "Zen Kaku Gothic New", "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Yu Gothic", "Meiryo", sans-serif;
+  box-sizing: border-box;
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #14161d;
+    --surface: #1c2029;
+    --ink: #e9ebf1;
+    --ink-2: #a0a7b8;
+    --line: #2d3343;
+    --accent: #8c9eff;
+    --mark: #5a4a12;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #14161d;
+  --surface: #1c2029;
+  --ink: #e9ebf1;
+  --ink-2: #a0a7b8;
+  --line: #2d3343;
+  --accent: #8c9eff;
+  --mark: #5a4a12;
+}
+html { scroll-padding-top: env(safe-area-inset-top, 0px); scroll-behavior: smooth; }
+*, *::before, *::after { box-sizing: inherit; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--body);
+  line-height: 1.7;
+  -webkit-text-size-adjust: 100%;
+}
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.wrap { max-width: 1080px; margin: 0 auto; padding: 0 1.25rem; }
+
+/* hero */
+.hero { padding-top: 2.75rem; padding-bottom: 1.25rem; }
+h1 {
+  font-family: var(--pixel);
+  font-weight: 400;
+  font-size: clamp(2rem, 6.4vw, 3.5rem);
+  line-height: 1.2;
+  letter-spacing: .02em;
+  margin: 0;
+}
+.sub { margin: .9rem 0 0; color: var(--ink-2); max-width: 36rem; }
+
+/* proportional bar: one segment per console, width = number of games */
+.spine {
+  display: flex;
+  gap: 2px;
+  height: 44px;
+  margin: 1.75rem 0 1rem;
+  padding: 0;
+  list-style: none;
+  animation: reveal 1s cubic-bezier(.2, .7, .2, 1) both;
+}
+.spine li { flex: var(--n) 1 0%; min-width: 8px; transition: opacity .2s; }
+.spine a { display: block; height: 100%; background: var(--c); }
+.spine li.dim { opacity: .2; }
+@keyframes reveal {
+  from { clip-path: inset(0 100% 0 0); }
+  to { clip-path: inset(0 0 0 0); }
+}
+
+.legend {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr));
+  gap: .1rem .75rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  transition: opacity .2s;
+}
+.legend li { transition: opacity .2s; }
+.legend li.dim { opacity: .35; }
+.legend a {
+  display: flex;
+  align-items: baseline;
+  gap: .55rem;
+  padding: .4rem .35rem;
+  color: inherit;
+  text-decoration: none;
+  border-radius: 6px;
+}
+.legend a:hover { background: var(--surface); }
+.legend i { width: .7rem; height: .7rem; background: var(--c); flex: none; align-self: center; }
+.legend .n { margin-left: auto; font-family: var(--pixel); color: var(--ink-2); }
+
+/* sticky search / filter */
+.tools {
+  position: sticky;
+  top: env(safe-area-inset-top, 0px);
+  z-index: 5;
+  padding: .75rem 0 .6rem;
+  background: var(--bg);
+  border-bottom: 1px solid var(--line);
+}
+input[type="search"] {
+  display: block;
+  width: 100%;
+  font: inherit;
+  font-size: 1rem;
+  padding: .65rem .95rem;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--surface);
+  color: var(--ink);
+}
+input[type="search"]::placeholder { color: var(--ink-2); }
+.chips {
+  display: flex;
+  gap: .4rem;
+  margin-top: .6rem;
+  padding-bottom: .2rem;
+  overflow-x: auto;
+  scrollbar-width: thin;
+}
+.chip {
+  flex: none;
+  font: inherit;
+  font-size: .875rem;
+  line-height: 1.5;
+  padding: .3rem .8rem;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  color: var(--ink);
+  cursor: pointer;
+}
+.chip:hover { border-color: var(--ink-2); }
+.chip .c { margin-left: .35em; font-size: .8em; color: var(--ink-2); }
+.chip[aria-pressed="true"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+.chip[aria-pressed="true"] .c { color: inherit; opacity: .7; }
+
+/* list */
+.status { margin: 1.25rem 0 0; font-size: .9rem; color: var(--ink-2); min-height: 1.6em; }
+.plat { margin-top: 2.5rem; scroll-margin-top: 9rem; }
+.plat[hidden] { display: none; }
+.plat-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: .2rem 1rem;
+  padding-top: .85rem;
+  border-top: 4px solid var(--c);
+}
+.plat-head h2 { font-family: var(--pixel); font-weight: 400; font-size: 1.75rem; line-height: 1.2; margin: 0; }
+.plat-head .meta { font-size: .9rem; color: var(--ink-2); }
+.plat-head .count { margin-left: auto; font-family: var(--pixel); font-size: 1.2rem; }
+.games { list-style: none; margin: .9rem 0 0; padding: 0; columns: 17rem 3; column-gap: 2rem; }
+.games li { break-inside: avoid; padding: .45rem 0; border-bottom: 1px solid var(--line); line-height: 1.5; }
+.also {
+  margin-left: .5em;
+  padding: 0 .4em;
+  font-size: .72rem;
+  color: var(--ink-2);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  white-space: nowrap;
+}
+mark { background: var(--mark); color: inherit; border-radius: 2px; }
+.empty {
+  margin: 3rem 0;
+  padding: 2.25rem 1.25rem;
+  text-align: center;
+  color: var(--ink-2);
+  border: 1px dashed var(--line);
+  border-radius: 12px;
+}
+footer { margin-top: 4rem; margin-bottom: 3rem; font-size: .85rem; color: var(--ink-2); }
+
+@media (max-width: 520px) {
+  .hero { padding-top: 2rem; }
+  .spine { height: 36px; }
+  .plat-head h2 { font-size: 1.5rem; }
+}
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .spine { animation: none; }
+  .spine li, .legend li { transition: none; }
+}
+</style>
+</head>
+<body>
+
+<header class="hero wrap">
+  <h1>プレイしたゲーム PlayStation編</h1>
+  <p class="sub">PlayStationからPlayStation 4まで、携帯機のPSPとVitaを含む6機種、全226本。発売年の古いハードから順に並べています。</p>
+  <ol class="spine" id="spine" aria-label="ハードごとのプレイ本数の割合"></ol>
+  <nav aria-label="ハードへ移動"><ul class="legend" id="legend"></ul></nav>
+</header>
+
+<div class="tools">
+  <div class="wrap">
+    <input type="search" id="q" placeholder="タイトルで検索（ひらがなでもOK）" aria-label="タイトルを検索" autocomplete="off">
+    <div class="chips" id="chips" role="group" aria-label="シリーズで絞り込む"></div>
+  </div>
+</div>
+
+<main class="wrap">
+  <p class="status" id="status" role="status" aria-live="polite"></p>
+  <div id="platforms"></div>
+  <div class="empty" id="empty" hidden>該当するゲームがありません。キーワードを変えるか、シリーズの選択を外してください。</div>
+</main>
+
+<footer class="wrap">同じタイトルを複数のハードで遊んだ場合は、それぞれのハードに載せています。</footer>
+
+<script>
+(function () {
+  'use strict';
+
+  var DATA = [{"id": "ps", "name": "PlayStation", "short": "PS", "year": 1994, "color": "#8a94a6", "games": ["アークザラッドII", "アークザラッド・モンスターゲーム with カジノゲーム", "アーマードコア", "アーマード・コア マスターオブアリーナ", "R4-RIDGE RACER TYPE4-", "RPGツクール3", "I.Q インテリジェントキューブ", "アランドラ", "ウィザードリィ リルガミンサーガ", "エアガイツ", "SDガンダム GGENERATION-F", "X-MEN VS. STREET FIGHTER EX EDITION", "エンドセクター", "俺の料理", "風のクロノア door to phantomile", "カプコンジェネレーション第2集", "ガンバレット", "がんばれ森川君2号", "ギターフリークス", "クラッシュ・バンディクー", "クラッシュ・バンディクー2 コルテックスの逆襲!", "クラッシュ・バンディクー3 ブッとび!世界一周", "クラッシュ・バンディクー カーニバル", "グランツーリスモ", "グランツーリスモ2", "激走トマランナー", "ゲゲゲの鬼太郎", "コンバットチョロQ", "ザ・コンビニ2", "サガ フロンティア", "サガ フロンティア2", "サルゲッチュ", "じぱんぐ島", "ジョジョの奇妙な冒険", "シミュレーションRPGツクール", "私立ジャスティス学園", "新 テーマパーク", "スーパーロボット大戦α", "スターオーシャン セカンドストーリー", "ストリートファイターZERO2", "ストリートファイターZERO3", "聖剣伝説 レジェンド オブ マナ", "せがれいじり", "Dance Dance Revolution 2ndReMIX", "Dance Dance Revolution 3rdMIX", "チョコボの不思議なダンジョン", "チョコボの不思議なダンジョン2", "チョロQ", "チョロQ2", "チョロQ3", "チョロQワンダフォー!", "テーマ アクアリウム", "テーマパークワールド", "ディアブロ", "鉄拳2", "テトリスプラス", "テイルズ オブ エターニア", "テイルズ オブ デスティニー", "テイルズ オブ ファンタジア", "デジモンワールド", "デジモンワールド2", "電車でGO!", "闘神伝2", "どこでもいっしょ", "トバルNo.1", "トバル2", "ドラゴンクエストVII エデンの戦士たち", "ドラゴンクエストキャラクターズ トルネコの大冒険2 不思議のダンジョン", "トロンにコブン", "ナムコミュージアム VOL.1", "ナムコミュージアム VOL.2", "ナムコミュージアム VOL.3", "ナムコミュージアム VOL.4", "ナムコミュージアム VOL.5", "ナムコミュージアムアンコール", "ネオアトラス", "バーガーバーガー", "バイオハザード ディレクターズカット", "バイオハザード2", "バイオハザード3 LAST ESCAPE", "ハイパーオリンピック イン アトランタ", "パネキット", "パンドラプロジェクト", "ビートマニア", "ビートマニア アペンド 3rdMIX", "ビートマニア アペンド 4thMIX", "ビートマニア アペンド 5thMIX", "ビートマニア 6thMIX + CORE REMIX", "ビートマニア アペンドクラブミックス", "ビートマニア アペンド GOTTAMIX", "ビートマニア アペンド GOTTAMIX2〜GoingGlobal〜", "ビートマニア BEST HITS", "ファイナルファンタジーIV", "ファイナルファンタジーV", "ファイナルファンタジーVII", "ファイナルファンタジーVII インターナショナル", "ファイナルファンタジーVIII", "ファイナルファンタジーIX", "ファイナルファンタジータクティクス", "フィッシュアイズ", "ブシドーブレード", "ブレイヴフェンサー 武蔵伝", "Blaze & Blade Busters", "ポケットじまん", "ポケットダンジョン", "ポケットデジモンワールド", "ポケットファイター", "ポケットムームー", "ポケラー", "ボンバーマンランド", "みんなのGOLF", "メタルギアソリッド", "モンスターコンプリワールド", "モンスターファーム", "モンスターファーム2", "遊☆戯☆王 真デュエルモンスターズ 封印されし記憶", "遊☆戯☆王 モンスターカプセルブリード&バトル", "リッジレーサー", "リモートコントロールダンディ", "レイジレーサー", "ロードオブモンスターズ", "ロックマン2 Dr.ワイリーの謎", "ロックマン8 メタルヒーローズ", "ロックマンX3", "ロックマンX4"]}, {"id": "ps2", "name": "PlayStation 2", "short": "PS2", "year": 2000, "color": "#3f51b5", "games": ["アーマード・コア3", "アーマード・コア3 サイレントライン", "アーマード・コア ネクサス", "アーマード・コア ナインブレイカー", "アーマード・コア ラストレイヴン", "いくぜ!温泉卓球!!", "鬼武者2", "鬼武者3", "ギターフリークス 3rd MIX&ドラムマニア 2nd MIX", "ギタドラ! GUITARFREAKS 4th MIX & drummania 3rd MIX", "GuitarFreaks & DrumMania V2", "GuitarFreaks & DrumMania V3", "GuitarFreaks & DrumMania MASTERPIECE SILVER", "GuitarFreaks & DrumMania MASTERPIECE GOLD", "ギターヒーロー3 レジェンド オブ ロック", "グランド・セフト・オート・サンアンドレアス", "グランツーリスモ3 A-spec", "劇空間プロ野球", "真・三國無双2", "真・三國無双3", "真・三國無双4", "戦国無双", "戦国無双2", "ストリートファイターEX3", "チョロQ HG2", "テイルズ オブ デスティニー2", "デビルメイクライ", "デビルメイクライ2", "デビルメイクライ3", "ドカポンDX 〜わたる世界はオニだらけ〜", "ドラゴンボールZ Sparking!", "バルダーズ・ゲート ダークアライアンス", "beatmania IIDX 16 EMPRESS + PREMIUM BEST", "ファイナルファンタジーX", "MARVEL VS. CAPCOM 2 NEW AGE OF HEROES", "メタルギアソリッド2 サンズ・オブ・リバティ METAL GEAR SOLID2 SONS OF LIBERTY", "メタルギアソリッド3", "リッジレーサーV"]}, {"id": "psp", "name": "PlayStation Portable", "short": "PSP", "year": 2004, "color": "#00acc1", "games": ["クラシックダンジョン 〜扶翼の魔装陣〜", "クラシックダンジョンX2", "極魔界村", "テイルズ オブ デスティニー2", "初音ミク -Project DIVA-", "初音ミク -Project DIVA- 2nd", "ファイナルファンタジータクティクス 獅子戦争", "ファンタシースターポータブル2", "モンスターハンターポータブル 2nd G"]}, {"id": "ps3", "name": "PlayStation 3", "short": "PS3", "year": 2006, "color": "#f0a020", "games": ["Guitar Hero 5", "グランツーリスモ5", "The Last of Us", "STREET FIGHTER X TEKKEN", "セイクリッド2", "戦国BASARA HD", "戦国BASARA2 HD", "DARK SOULS", "バイオハザード5", "バイオハザード6", "ララ・クロフト アンド ガーディアン オブ ライト", "リトルビッグプラネット", "ワンダーボーイ モンスターランド"]}, {"id": "vita", "name": "PlayStation Vita", "short": "Vita", "year": 2011, "color": "#e91e8c", "games": ["アマガミ", "地球防衛軍3 PORTABLE", "地獄の軍団", "STEINS;GATE", "SOUL SACRIFICE", "討鬼伝", "初音ミク -Project DIVE- f", "初音ミク -Project DIVE- F 2nd", "ひぐらしのなく頃に絆", "ファイナルファンタジーX/X-2 HDリマスター", "不思議のダンジョン 風来のシレン5 plus", "Re:ゼロから始める異世界生活 -DEATH OR KISS-", "ロマンシング サガ2"]}, {"id": "ps4", "name": "PlayStation 4", "short": "PS4", "year": 2014, "color": "#0070d1", "games": ["UNDERTALE", "いただきストリート ドラゴンクエスト＆ファイナルファンタジー", "It Takes Two", "親フラリズム～うしろ！うしろ！～", "Salt and Sanctuary", "Salt and Sacrifice", "Destiny", "DARK SOULS II SCHOLAR OF THE FIRST SIN", "DARK SOULS III", "Diablo III: Reaper of Souls", "DEEMO -Reborn-", "Tales of ARISE", "Devil May Cry", "ドラゴンクエストビルダーズ", "初音ミク -Project DIVA- X", "バレットガールズ ファンタジア", "Fall Guys", "Bloodborne", "Minecraft", "モンスターハンターワールド", "モンスターハンターワールド：アイスボーン", "Lara Croft and the Temple of Osiris", "ローグ・レガシー", "ロックマン クラシックス コレクション", "ロックマン11 運命の歯車!!", "ロックマンX アニバーサリー コレクション", "ロックマンX アニバーサリー コレクション2", "ロマンシング サガ3"]}];
+
+  // series filters: keys are matched against the title
+  var SERIES = [
+    ['BEMANI', ['ビートマニア', 'beatmania', 'ギターフリークス', 'GuitarFreaks', 'ギタドラ', 'Dance Dance Revolution']],
+    ['リズム・音ゲー', ['ビートマニア', 'beatmania', 'ギターフリークス', 'GuitarFreaks', 'ギタドラ', 'Dance Dance Revolution', 'ギターヒーロー', 'Guitar Hero', '初音ミク', 'DEEMO', 'リズム']],
+    ['初音ミク', ['初音ミク']],
+    ['ファイナルファンタジー', ['ファイナルファンタジー']],
+    ['ドラゴンクエスト', ['ドラゴンクエスト']],
+    ['サガ', ['サガ']],
+    ['テイルズ オブ', ['テイルズ オブ', 'Tales of']],
+    ['ロックマン', ['ロックマン']],
+    ['アーマード・コア', ['アーマード・コア']],
+    ['グランツーリスモ', ['グランツーリスモ']],
+    ['リッジレーサー', ['リッジレーサー', 'RIDGE RACER']],
+    ['バイオハザード', ['バイオハザード']],
+    ['デビルメイクライ', ['デビルメイクライ', 'Devil May Cry']],
+    ['DARK SOULS', ['DARK SOULS']],
+    ['モンスターハンター', ['モンスターハンター']],
+    ['無双', ['無双']],
+    ['チョロQ', ['チョロQ']],
+    ['クラッシュ・バンディクー', ['クラッシュ・バンディクー']],
+    ['ストリートファイター', ['ストリートファイター', 'STREET FIGHTER']],
+    ['メタルギア', ['メタルギア']],
+    ['デジモン', ['デジモン']],
+    ['ナムコミュージアム', ['ナムコミュージアム']]
+  ];
+  var MIN_SERIES = 3;
+
+  // ---- text folding: width, case, hiragana -> katakana, no spaces / middle dots
+  function fold(ch) {
+    return ch.normalize('NFKC').toLowerCase()
+      .replace(/[\u3041-\u3096]/g, function (c) { return String.fromCharCode(c.charCodeAt(0) + 0x60); })
+      .replace(/[\s\u30fb]/g, '');
+  }
+  function foldMap(s) {
+    var out = '', map = [];
+    for (var i = 0; i < s.length; i++) {
+      var f = fold(s[i]);
+      for (var j = 0; j < f.length; j++) { out += f[j]; map.push(i); }
+    }
+    return { out: out, map: map };
+  }
+
+  var $ = function (id) { return document.getElementById(id); };
+  function el(tag, cls, text) {
+    var e = document.createElement(tag);
+    if (cls) e.className = cls;
+    if (text != null) e.textContent = text;
+    return e;
+  }
+
+  // titles that appear on more than one console
+  var seen = {};
+  DATA.forEach(function (p) {
+    p.games.forEach(function (t) { (seen[t] = seen[t] || []).push(p); });
+  });
+
+  var total = DATA.reduce(function (a, p) { return a + p.games.length; }, 0);
+  var spine = $('spine'), legend = $('legend'), root = $('platforms');
+
+  // ---- build
+  DATA.forEach(function (p) {
+    // proportional bar
+    var sl = el('li');
+    sl.style.setProperty('--n', p.games.length);
+    sl.style.setProperty('--c', p.color);
+    var sa = el('a');
+    sa.href = '#' + p.id;
+    sa.title = p.name + ' ' + p.games.length + '本';
+    sa.setAttribute('aria-label', p.name + ' ' + p.games.length + '本');
+    sl.appendChild(sa);
+    spine.appendChild(sl);
+
+    // legend / nav
+    var ll = el('li');
+    ll.style.setProperty('--c', p.color);
+    var la = el('a');
+    la.href = '#' + p.id;
+    la.appendChild(el('i'));
+    la.appendChild(el('span', '', p.name));
+    p.legendCount = el('span', 'n', String(p.games.length));
+    la.appendChild(p.legendCount);
+    ll.appendChild(la);
+    legend.appendChild(ll);
+
+    // section
+    var sec = el('section', 'plat');
+    sec.id = p.id;
+    sec.style.setProperty('--c', p.color);
+    sec.setAttribute('aria-labelledby', p.id + '-h');
+    var head = el('div', 'plat-head');
+    var h2 = el('h2', '', p.name);
+    h2.id = p.id + '-h';
+    head.appendChild(h2);
+    head.appendChild(el('span', 'meta', p.year + '年発売'));
+    p.countEl = el('span', 'count', p.games.length + '本');
+    head.appendChild(p.countEl);
+    sec.appendChild(head);
+
+    var ul = el('ul', 'games');
+    p.items = p.games.map(function (title) {
+      var li = el('li');
+      var span = el('span', 'title', title);
+      li.appendChild(span);
+      var others = seen[title].filter(function (o) { return o !== p; });
+      if (others.length) {
+        var tag = el('span', 'also', others.map(function (o) { return o.short; }).join('・') + 'でも');
+        tag.title = others.map(function (o) { return o.name; }).join('、') + 'でもプレイ';
+        li.appendChild(tag);
+      }
+      ul.appendChild(li);
+      return { title: title, fm: foldMap(title), li: li, span: span };
+    });
+    sec.appendChild(ul);
+    root.appendChild(sec);
+
+    p.spineLi = sl;
+    p.legendLi = ll;
+    p.sec = sec;
+  });
+
+  // ---- series chips
+  var chips = $('chips');
+  var state = { q: '', series: null };
+  var chipEls = [];
+
+  function matchesKeys(fm, keys) {
+    return keys.some(function (k) { return fm.out.indexOf(k) !== -1; });
+  }
+  SERIES.forEach(function (s) {
+    s.keys = s[1].map(function (k) { return foldMap(k).out; });
+    s.count = 0;
+    DATA.forEach(function (p) {
+      p.items.forEach(function (it) { if (matchesKeys(it.fm, s.keys)) s.count++; });
+    });
+  });
+
+  function makeChip(label, count, series) {
+    var b = el('button', 'chip', label);
+    b.type = 'button';
+    if (count != null) b.appendChild(el('span', 'c', String(count)));
+    b.setAttribute('aria-pressed', 'false');
+    b.addEventListener('click', function () {
+      state.series = (state.series === series) ? null : series;
+      apply();
+    });
+    b._series = series;
+    chips.appendChild(b);
+    chipEls.push(b);
+  }
+  makeChip('すべて', null, null);
+  SERIES.filter(function (s) { return s.count >= MIN_SERIES; }).forEach(function (s) {
+    makeChip(s[0], s.count, s);
+  });
+
+  // ---- filtering
+  function paint(it, q) {
+    var span = it.span;
+    span.textContent = '';
+    if (q) {
+      var i = it.fm.out.indexOf(q);
+      if (i !== -1) {
+        var a = it.fm.map[i], b = it.fm.map[i + q.length - 1] + 1;
+        span.appendChild(document.createTextNode(it.title.slice(0, a)));
+        var m = el('mark', '', it.title.slice(a, b));
+        span.appendChild(m);
+        span.appendChild(document.createTextNode(it.title.slice(b)));
+        return;
+      }
+    }
+    span.textContent = it.title;
+  }
+
+  function apply() {
+    var q = foldMap(state.q.normalize('NFKC')).out;
+    var keys = state.series ? state.series.keys : null;
+    var filtered = !!(q || keys);
+    var shown = 0;
+
+    DATA.forEach(function (p) {
+      var n = 0;
+      p.items.forEach(function (it) {
+        var ok = true;
+        if (q && it.fm.out.indexOf(q) === -1) ok = false;
+        if (ok && keys && !matchesKeys(it.fm, keys)) ok = false;
+        it.li.hidden = !ok;
+        if (ok) n++;
+        paint(it, ok ? q : '');
+      });
+      shown += n;
+      p.sec.hidden = n === 0;
+      p.spineLi.classList.toggle('dim', filtered && n === 0);
+      p.legendLi.classList.toggle('dim', filtered && n === 0);
+      p.countEl.textContent = filtered ? (n + ' / ' + p.games.length + '本') : (p.games.length + '本');
+      p.legendCount.textContent = filtered ? String(n) : String(p.games.length);
+    });
+
+    chipEls.forEach(function (b) {
+      b.setAttribute('aria-pressed', String(b._series === state.series));
+    });
+
+    var parts = [];
+    if (state.series) parts.push(state.series[0]);
+    if (state.q.trim()) parts.push('「' + state.q.trim() + '」');
+    $('status').textContent = filtered
+      ? (parts.join(' × ') + ' に該当：' + shown + '本（全' + total + '本中）')
+      : ('全' + total + '本を表示中');
+    $('empty').hidden = shown !== 0;
+  }
+
+  $('q').addEventListener('input', function (e) {
+    state.q = e.target.value;
+    apply();
+  });
+
+  apply();
+})();
+</script>
+</body>
+</html>
