@@ -37,7 +37,7 @@
     background:rgba(16,21,28,0.94);
     backdrop-filter:blur(6px);
     border-bottom:1px solid var(--line);
-    padding:28px 24px 18px;
+    padding:14px 24px 10px;
   }
   .header-inner{
     max-width:920px;
@@ -48,36 +48,36 @@
     align-items:baseline;
     justify-content:space-between;
     flex-wrap:wrap;
-    gap:8px 20px;
-    margin-bottom:18px;
+    gap:4px 20px;
+    margin-bottom:8px;
   }
   h1{
     font-family:'Shippori Mincho', serif;
     font-weight:700;
-    font-size:1.7rem;
+    font-size:1.25rem;
     margin:0;
     letter-spacing:0.04em;
   }
   .meta{
     color:var(--text-faint);
-    font-size:0.82rem;
+    font-size:0.75rem;
     letter-spacing:0.02em;
   }
   .meta strong{color:var(--accent-soft);font-weight:500;}
 
   .legend{
     color:var(--text-dim);
-    font-size:0.8rem;
-    line-height:1.9;
-    margin:2px 0 20px;
+    font-size:0.72rem;
+    line-height:1.5;
+    margin:0 0 10px;
   }
-  .legend .note{color:var(--text); display:block; margin-bottom:8px; font-size:0.85rem;}
-  .legend .row{display:flex; gap:8px; align-items:baseline;}
-  .legend .stars{color:var(--accent); flex:0 0 3.4em;}
+  .legend .note{color:var(--text); display:block; margin-bottom:3px; font-size:0.76rem;}
+  .legend .row{display:inline-flex; gap:5px; align-items:baseline; margin-right:14px;}
+  .legend .stars{color:var(--accent); flex:0 0 auto;}
 
   .controls{
     display:flex;
-    gap:10px;
+    gap:8px;
     flex-wrap:wrap;
     align-items:center;
   }
@@ -86,9 +86,9 @@
     background:var(--panel-alt);
     border:1px solid var(--line);
     color:var(--text);
-    padding:9px 14px;
+    padding:6px 12px;
     border-radius:3px;
-    font-size:0.92rem;
+    font-size:0.85rem;
     font-family:inherit;
     outline:none;
     transition:border-color .15s ease;
@@ -100,9 +100,9 @@
     background:transparent;
     border:1px solid var(--line);
     color:var(--text-dim);
-    padding:8px 14px;
+    padding:5px 12px;
     border-radius:3px;
-    font-size:0.85rem;
+    font-size:0.78rem;
     font-family:inherit;
     cursor:pointer;
     white-space:nowrap;
@@ -119,13 +119,13 @@
   /* ---------- year jump strip ---------- */
   #yearstrip{
     max-width:920px;
-    margin:14px auto 0;
+    margin:10px auto 0;
     display:flex;
     gap:2px 10px;
     flex-wrap:wrap;
-    font-size:0.74rem;
+    font-size:0.7rem;
     color:var(--text-faint);
-    padding-top:14px;
+    padding-top:8px;
     border-top:1px solid var(--line);
   }
   #yearstrip a{
@@ -224,9 +224,7 @@
     </div>
     <div class="legend">
       <span class="note">リアルタイムで見ていないものが多いかも？</span>
-      <span class="row"><span class="stars">☆</span>一応全部観たはず</span>
-      <span class="row"><span class="stars">☆☆</span>全部観た(見てないシーズンもあるかも)</span>
-      <span class="row"><span class="stars">☆☆☆</span>２周以上観た</span>
+      <span class="row"><span class="stars">☆</span>一応全部観たはず</span><span class="row"><span class="stars">☆☆</span>全部観た(見てないシーズンもあるかも)</span><span class="row"><span class="stars">☆☆☆</span>２周以上観た</span>
     </div>
     <div class="controls">
       <input id="search" type="text" placeholder="タイトルで検索…">
